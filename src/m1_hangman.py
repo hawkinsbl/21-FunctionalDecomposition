@@ -26,7 +26,7 @@ def starthang():
         if len(item) >= input1:
             break
     print("A word has been selected")
-    #print(len(item))
+    print("The word is", len(item), "letters long")
     #print(item)
     return item
 
@@ -38,6 +38,7 @@ def wordselect():
         item = words[random.randrange(2, len(words))]
     return item
 
+
 def startboard(string):
     boris = []
     for k in range(len(string)):
@@ -45,45 +46,73 @@ def startboard(string):
     print(boris)
     return boris
 
+
 def playhang(board, string):
-    print(string)
-    print(board)
+    #print(string)
+    #print(board)
     tries = 0
     used = []
+    state = 0
     while True:
         print('You have ', 5 - tries, 'left')
-        previousstate = board
+        #previousstate = board
         input1 = getuserinput()
-        boardstate(board, string, input1)
-        print(previousstate == board)
-        if previousstate == board:
+        previousstate = state
+        state = boardstate(board, string, input1, state)
+        #print(previousstate == board)
+        if state == previousstate:
             tries = tries + 1
             used.append(input1)
             print('You have used the following letters: ', used)
             if tries >= 5:
                 break
+        if wincond(state, string) is True:
+            print("Conglaturations, You weren't hung")
+            return
     print("The Hang has been hung")
+    print("The Word was: ", string)
 
 
-def boardstate(board, string, input1):
+def boardstate(board, string, input1, state):
+    totalwrong = 0
+    totalright = state
     for k in range(len(string)):
         if input1 == string[k]:
             board[k] = " " + input1 + " "
-    print (board)
-    return board
+            totalright += 1
+        else:
+            totalwrong = totalwrong + 1
+    print(board)
+    return totalright
 
 
 def getuserinput():
-    input1 = input('Guess a letter owo')
+    input1 = input('Guess a letter: ')
     if len(input1) > 1:
         print("Pick one letter")
         input1 = getuserinput()
     return input1
 
 
+def wincond(totalright, string):
+    if totalright == len(string):
+        return True
+    return False
+
+def playagain():
+    inputt = input('Do you want to play again? uwu (y/n)')
+    if inputt == 'y':
+        main()
+    elif inputt == 'n':
+        print('Thank you for playing!')
+    else:
+        print('learn to read')
+        playagain()
+
 def main():
     string = starthang()
     board = startboard(string)
-    game = playhang(board, string)
+    playhang(board, string)
+    playagain()
 
 main()
